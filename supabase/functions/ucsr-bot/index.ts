@@ -4,6 +4,8 @@ import { Bot, webhookCallback } from "https://deno.land/x/grammy@v1.14.1/mod.ts"
 import { format } from "https://deno.land/std@0.177.0/datetime/mod.ts";
 import { Database } from "./database.types.ts";
 
+console.log("UCSR Bot is running...");
+
 const supabase = createClient<Database>("https://tbympouurznyzuqonorf.supabase.co", Deno.env.get("SUPABASE_KEY")!);
 const bot = new Bot(Deno.env.get("BOT_TOKEN")!);
 
@@ -101,6 +103,8 @@ bot.command("showtournaments", async (ctx) => {
 const handleUpdate = webhookCallback(bot, "std/http");
 serve(async (req) => {
 	try {
+		console.log("Got request", req);
+
 		const url = new URL(req.url);
 		if (url.searchParams.get("secret") !== bot.token) {
 			return new Response("not allowed", { status: 405 });
