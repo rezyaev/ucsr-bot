@@ -1,5 +1,5 @@
-import { format } from "https://deno.land/std@0.177.0/datetime/mod.ts";
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { format } from "https://deno.land/std@0.178.0/datetime/mod.ts";
+import { serve } from "https://deno.land/std@0.178.0/http/server.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 import { Bot, webhookCallback } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
 import { Client } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
