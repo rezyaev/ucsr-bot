@@ -17,8 +17,6 @@ const handleUpdate = webhookCallback(bot, "std/http");
 serve(
 	async (request) => {
 		try {
-			console.log("Recieved a request", { request });
-
 			if (new URL(request.url).searchParams.get("secret") !== bot.token) {
 				return new Response("not allowed", { status: 405 });
 			}
@@ -35,8 +33,8 @@ serve(
 
 type Member = {
 	id: number;
-	telegram_username: string;
-	steam_username: string;
+	telegramUsername: string;
+	steamUsername: string;
 };
 
 type Tournament = {
@@ -44,7 +42,7 @@ type Tournament = {
 	name: string;
 	start: string;
 	finish: string;
-	fantasy_winner: number;
+	fantasyWinner: number;
 };
 
 bot.command("showfantasywins", async (ctx) => {
@@ -54,11 +52,11 @@ bot.command("showfantasywins", async (ctx) => {
 	return ctx.reply(
 		members
 			.map(({ id, ...rest }) => ({
-				winCount: tournaments.filter(({ fantasy_winner }) => fantasy_winner === id).length,
+				winCount: tournaments.filter(({ fantasyWinner }) => fantasyWinner === id).length,
 				...rest,
 			}))
 			.sort((a, b) => b.winCount - a.winCount)
-			.map(({ telegram_username, winCount }) => `@${telegram_username}: ${winCount}`)
+			.map(({ telegramUsername, winCount }) => `@${telegramUsername}: ${winCount}`)
 			.join("\n")
 	);
 });
@@ -75,14 +73,14 @@ bot.command("addfantasywin", async (ctx) => {
 	const wonTournament = (await client.queryObject<Tournament>`SELECT * FROM tournaments WHERE name = ${tournamentName}`)
 		.rows[0];
 
-	if (wonTournament.fantasy_winner !== null) {
+	if (wonTournament.fantasyWinner !== null) {
 		return ctx.reply(`У <b>${wonTournament.name}</b> уже есть победитель!`, { parse_mode: "HTML" });
 	}
 
 	await client.queryObject<Tournament>`UPDATE tournaments SET fantasy_winner = ${winner.id} WHERE name = ${tournamentName}`;
 
 	return ctx.reply(
-		`Поздравляю, @${winner.telegram_username}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
+		`Поздравляю, @${winner.telegramUsername}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
 		{ parse_mode: "HTML" }
 	);
 });
