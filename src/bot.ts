@@ -14,21 +14,24 @@ await bot.api.setMyCommands([
 const client = new Client(Deno.env.get("DATABASE_URL")!);
 const handleUpdate = webhookCallback(bot, "std/http");
 
-serve(async (request) => {
-	try {
-		console.log("Recieved a request", { request });
+serve(
+	async (request) => {
+		try {
+			console.log("Recieved a request", { request });
 
-		if (new URL(request.url).searchParams.get("secret") !== bot.token) {
-			return new Response("not allowed", { status: 405 });
+			if (new URL(request.url).searchParams.get("secret") !== bot.token) {
+				return new Response("not allowed", { status: 405 });
+			}
+
+			await client.connect();
+			return await handleUpdate(request);
+		} catch (err) {
+			console.error(err);
+			await client.end();
 		}
-
-		await client.connect();
-		return await handleUpdate(request);
-	} catch (err) {
-		console.error(err);
-		await client.end();
-	}
-});
+	},
+	{ port: parseInt(Deno.env.get("PORT")!) }
+);
 
 type Member = {
 	id: number;
