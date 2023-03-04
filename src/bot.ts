@@ -14,14 +14,16 @@ await bot.api.setMyCommands([
 const client = new Client(Deno.env.get("DATABASE_URL")!);
 const handleUpdate = webhookCallback(bot, "std/http");
 
-serve(async (req) => {
+serve(async (request) => {
 	try {
-		if (new URL(req.url).searchParams.get("secret") !== bot.token) {
+		console.log("Recieved a request", { request });
+
+		if (new URL(request.url).searchParams.get("secret") !== bot.token) {
 			return new Response("not allowed", { status: 405 });
 		}
 
 		await client.connect();
-		return await handleUpdate(req);
+		return await handleUpdate(request);
 	} catch (err) {
 		console.error(err);
 		await client.end();
