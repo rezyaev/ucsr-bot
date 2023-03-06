@@ -73,6 +73,7 @@ bot.command("addfantasywin", async (ctx) => {
 	const wonTournament = (await client.queryObject<Tournament>`SELECT * FROM tournaments WHERE name = ${tournamentName}`)
 		.rows[0];
 
+	console.log({ wonTournament });
 	if (wonTournament.fantasyWinner !== null) {
 		return ctx.reply(`У <b>${wonTournament.name}</b> уже есть победитель!`, { parse_mode: "HTML" });
 	}
