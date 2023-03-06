@@ -68,7 +68,7 @@ bot.command("addfantasywin", async (ctx) => {
 	}
 	const [_, telegramUsername, tournamentName] = match;
 
-	const winner = (await client.queryObject<Member>`SELECT * FROM members WHERE telegram_username = ${telegramUsername}`)
+	const winner = (await client.queryObject<Member>`SELECT * FROM members WHERE telegramUsername = ${telegramUsername}`)
 		.rows[0];
 	const wonTournament = (await client.queryObject<Tournament>`SELECT * FROM tournaments WHERE name = ${tournamentName}`)
 		.rows[0];
@@ -77,7 +77,7 @@ bot.command("addfantasywin", async (ctx) => {
 		return ctx.reply(`У <b>${wonTournament.name}</b> уже есть победитель!`, { parse_mode: "HTML" });
 	}
 
-	await client.queryObject<Tournament>`UPDATE tournaments SET fantasy_winner = ${winner.id} WHERE name = ${tournamentName}`;
+	await client.queryObject<Tournament>`UPDATE tournaments SET fantasyWinner = ${winner.id} WHERE name = ${tournamentName}`;
 
 	return ctx.reply(
 		`Поздравляю, @${winner.telegramUsername}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
