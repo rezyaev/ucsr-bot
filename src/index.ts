@@ -49,6 +49,7 @@ bot.command("showfantasywins", async (ctx) => {
 	const { rows: members } = await client.queryObject<Member>`SELECT * FROM members`;
 	const { rows: tournaments } = await client.queryObject<Tournament>`SELECT * FROM tournaments`;
 
+	console.log({ members, tournaments });
 	return ctx.reply(
 		members
 			.map(({ id, ...rest }) => ({
