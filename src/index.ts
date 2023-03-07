@@ -49,7 +49,6 @@ bot.command("showfantasywins", async (ctx) => {
 	const { rows: members } = await client.queryObject<Member>`SELECT * FROM members`;
 	const { rows: tournaments } = await client.queryObject<Tournament>`SELECT * FROM tournaments`;
 
-	console.log({ members, tournaments });
 	return ctx.reply(
 		members
 			.map(({ id, ...rest }) => ({
@@ -78,7 +77,7 @@ bot.command("addfantasywin", async (ctx) => {
 		return ctx.reply(`У <b>${wonTournament.name}</b> уже есть победитель!`, { parse_mode: "HTML" });
 	}
 
-	await client.queryObject<Tournament>`UPDATE tournaments SET fantasyWinner = ${winner.id} WHERE name = ${tournamentName}`;
+	await client.queryObject<Tournament>`UPDATE tournaments SET fantasy_winner = ${winner.id} WHERE name = ${tournamentName}`;
 
 	return ctx.reply(
 		`Поздравляю, @${winner.telegram_username}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
