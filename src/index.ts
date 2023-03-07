@@ -23,8 +23,8 @@ serve(
 
 			await client.connect();
 			return await handleUpdate(request);
-		} catch (err) {
-			console.error(err);
+		} catch (error) {
+			console.error(error);
 			await client.end();
 		}
 	},
@@ -33,8 +33,8 @@ serve(
 
 type Member = {
 	id: number;
-	telegramUsername: string;
-	steamUsername: string;
+	telegram_username: string;
+	steam_username: string;
 };
 
 type Tournament = {
@@ -42,7 +42,7 @@ type Tournament = {
 	name: string;
 	start: string;
 	finish: string;
-	fantasyWinner: number;
+	fantasy_winner: number;
 };
 
 bot.command("showfantasywins", async (ctx) => {
@@ -52,11 +52,11 @@ bot.command("showfantasywins", async (ctx) => {
 	return ctx.reply(
 		members
 			.map(({ id, ...rest }) => ({
-				winCount: tournaments.filter(({ fantasyWinner }) => fantasyWinner === id).length,
+				winCount: tournaments.filter(({ fantasy_winner }) => fantasy_winner === id).length,
 				...rest,
 			}))
 			.sort((a, b) => b.winCount - a.winCount)
-			.map(({ telegramUsername, winCount }) => `@${telegramUsername}: ${winCount}`)
+			.map(({ telegram_username, winCount }) => `@${telegram_username}: ${winCount}`)
 			.join("\n")
 	);
 });
@@ -68,20 +68,19 @@ bot.command("addfantasywin", async (ctx) => {
 	}
 	const [_, telegramUsername, tournamentName] = match;
 
-	const winner = (await client.queryObject<Member>`SELECT * FROM members WHERE telegramUsername = ${telegramUsername}`)
+	const winner = (await client.queryObject<Member>`SELECT * FROM members WHERE telegram_username = ${telegramUsername}`)
 		.rows[0];
 	const wonTournament = (await client.queryObject<Tournament>`SELECT * FROM tournaments WHERE name = ${tournamentName}`)
 		.rows[0];
 
-	console.log({ wonTournament });
-	if (wonTournament.fantasyWinner !== null) {
+	if (wonTournament.fantasy_winner !== null) {
 		return ctx.reply(`У <b>${wonTournament.name}</b> уже есть победитель!`, { parse_mode: "HTML" });
 	}
 
 	await client.queryObject<Tournament>`UPDATE tournaments SET fantasyWinner = ${winner.id} WHERE name = ${tournamentName}`;
 
 	return ctx.reply(
-		`Поздравляю, @${winner.telegramUsername}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
+		`Поздравляю, @${winner.telegram_username}! Ты разъебал нубасиков и выиграл <b>${wonTournament.name} Fantasy</b>!`,
 		{ parse_mode: "HTML" }
 	);
 });
